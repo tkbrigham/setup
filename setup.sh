@@ -33,7 +33,7 @@ resetColor
 printfBlue ">> Installing xcode-select..."
 if ! type "xcode-select" > /dev/null; then 
 	xcode-select --install
-	printfGreen "done\n"
+	printfGreen "...done\n"
 else
 	printfBlue "already installed\n"
 fi
@@ -45,7 +45,7 @@ mkdir -p ~/.vim/autoload ~/.vim/bundle && \
 curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 if ! grep -q 'execute pathogen#infect()' ~/.vimrc; then
 	printf "execute pathogen#infect()" >> ~/.vimrc
-	printfGreen "done\n"
+	printfGreen "...done\n"
 else
 	printfBlue "already set up\n"
 fi
@@ -55,7 +55,7 @@ resetColor
 printfBlue ">> Installing Tim Pope's minimal vim settings..."
 if grep -q 'filetype plugin indent on' ~/.vimrc; then
 	printf "\nsyntax on\nfiletype plugin indent on" >> ~/.vimrc
-	printfGreen "done\n"
+	printfGreen "...done\n"
 else
 	printfBlue "already installed\n"
 fi
@@ -69,20 +69,21 @@ else
 	cd ~/.vim/bundle/vim-sensible
 	git clone git://github.com/tpope/vim-sensible.git
 	cd ~/code
-	printfGreen "done\n"
+	printfGreen "...done\n"
 fi
 resetColor
 
 # Install pretzo, a replacement for oh-my-zsh
 printfBlue ">> Installing ~/.zpretzo..."
-if -q cd ~/.zprezto; then
+if [ -d ~/.zprezto ]; then
 	printfBlue "already exists\n"
 else
 	resetColor
+	echo ""
 	git clone --quiet --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
 	cd $setup_dir
-	zsh prezto_config.sh
-	printfGreen "done\n"
+	zsh run/prezto_config.sh
+	printfGreen "...done\n"
 fi
 resetColor
 
