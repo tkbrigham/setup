@@ -1,15 +1,7 @@
-printfBlue() {
-	printf "\e[34m$1"
-}
-
-printfGreen() {
-	printf "\e[32m$1"
-}
-
-resetColor() {
-	printf "\e[0m"
-}
-
+### Set up colors and setup directory
+printfBlue() { printf "\e[34m$1" }
+printfGreen() { printf "\e[32m$1" }
+resetColor() { printf "\e[0m" }
 setup_dir=$(pwd)
 
 # Change key repeat speed
@@ -53,7 +45,7 @@ resetColor
 
 # Add Tim Pope's super minimal vim settings from github.com/tpope/vim-pathogen
 printfBlue ">> Installing Tim Pope's minimal vim settings..."
-if grep -q 'filetype plugin indent on' ~/.vimrc; then
+if ! grep -q 'filetype plugin indent on' ~/.vimrc; then
 	printf "\nsyntax on\nfiletype plugin indent on" >> ~/.vimrc
 	printfGreen "...done\n"
 else
@@ -73,6 +65,8 @@ else
 fi
 resetColor
 
+### TODO: ADD OTHER .VIMRC THINGS HERE
+
 # Install pretzo, a replacement for oh-my-zsh
 printfBlue ">> Installing ~/.zpretzo..."
 if [ -d ~/.zprezto ]; then
@@ -86,5 +80,17 @@ else
 	printfGreen "...done\n"
 fi
 resetColor
+
+### TODO: UPDATE PRETZO SETTINGS FOR SHELL NAV
+
+### TODO: ITERM2 PREFERENCES - SET, SAVE, AND LOAD INTO FOLDER
+
+### TODO: RESTART TERMINAL
+
+### TODO: github keys??
+
+
+
+
 
 ## MUST RESTART FOR KEYSTROKE REPEAT TO WORK
