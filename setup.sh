@@ -1,3 +1,17 @@
+printfBlue() {
+	printf "\e[34m$1"
+}
+
+printfGreen() {
+	printf "\e[32m$1"
+}
+
+resetColor() {
+	printf "\e[0m"
+}
+
+setup_dir=$(pwd)
+
 # Change key repeat speed
 defaults write -g KeyRepeat -int 1
 defaults write -g InitialKeyRepeat -int 15
@@ -6,63 +20,70 @@ defaults write -g InitialKeyRepeat -int 15
 defaults write -g ApplePressAndHoldEnabled -bool false
 
 # Make zshell your shell always
+printfBlue '>> Setting shell to zshell...'
 if [ 'echo $0'='-zsh' ]; then
-	printf 'Shell already set to zshell\n'
+	printfBlue 'already set\n'
 else
 	chsh -s /bin/zsh
+	printfGreen 'done'
 fi
+resetColor
 
-mkdir -p ~/code
-cd ~/code
-
-# Install xcode-select
+### Install xcode-select
+printfBlue ">> Installing xcode-select..."
 if ! type "xcode-select" > /dev/null; then 
-	printf "Installing xcode-select..."
 	xcode-select --install
-	echo "done"
+	printfGreen "done\n"
 else
-	echo "xcode-select already installed"
+	printfBlue "already installed\n"
 fi
+resetColor
 
 # Install pathogen
-printf "Installing pathogen..."
+printfBlue ">> Installing pathogen..."
 mkdir -p ~/.vim/autoload ~/.vim/bundle && \
 curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 if ! grep -q 'execute pathogen#infect()' ~/.vimrc; then
 	printf "execute pathogen#infect()" >> ~/.vimrc
-	echo "done"
+	printfGreen "done\n"
 else
-	printf "already set up\n"
+	printfBlue "already set up\n"
 fi
+resetColor
 
 # Add Tim Pope's super minimal vim settings from github.com/tpope/vim-pathogen
-printf "Installing Tim Pope's minimal vim settings..."
+printfBlue ">> Installing Tim Pope's minimal vim settings..."
 if grep -q 'filetype plugin indent on' ~/.vimrc; then
 	printf "\nsyntax on\nfiletype plugin indent on" >> ~/.vimrc
-	printf "done\n"
+	printfGreen "done\n"
 else
-	printf "already installed\n"
+	printfBlue "already installed\n"
 fi
+resetColor
 
 # Add vim-sensible
-printf "Installing vim-sensible..."
+printfBlue ">> Installing vim-sensible..."
 if cd ~/.vim/bundle/vim-sensible; then
-	printf "vim-sensible already exists\n"
+	printfBlue "already installed\n"
 else
 	cd ~/.vim/bundle/vim-sensible
 	git clone git://github.com/tpope/vim-sensible.git
 	cd ~/code
-	echo "done"
+	printfGreen "done\n"
 fi
+resetColor
 
 # Install pretzo, a replacement for oh-my-zsh
-printf "Installing pretzo..."
-if cd ~/.zprezto; then
-	printf "~/.zprezto exists!\n"
+printfBlue ">> Installing ~/.zpretzo..."
+if -q cd ~/.zprezto; then
+	printfBlue "already exists\n"
 else
-	git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
-	zsh ~/prezto_config.sh
-	echo "AFTER PREZTO"
+	resetColor
+	git clone --quiet --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+	cd $setup_dir
+	zsh prezto_config.sh
+	printfGreen "done\n"
 fi
+resetColor
 
 ## MUST RESTART FOR KEYSTROKE REPEAT TO WORK
