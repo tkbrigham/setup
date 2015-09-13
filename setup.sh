@@ -99,6 +99,8 @@ silent_check "git clone https://github.com/MarcWeber/vim-addon-mw-utils.git"
 silent_check "git clone https://github.com/garbas/vim-snipmate.git"
 silent_check "git clone https://github.com/honza/vim-snippets.git"
 printfBlue "-------------\n"
+### install snippets: https://github.com/honza/vim-snippets/tree/master/snippets
+
 printfGreen "DONE\n\n"
 
 
