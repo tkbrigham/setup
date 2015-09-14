@@ -1,8 +1,12 @@
+### If anything fails, let the console know
+trap 'ret=$?; test $ret -ne 0 && printf "failed\n\n" >&2; exit $ret' EXIT
+
 #####
 ### FUNCTIONS
 #####
 
 ### Set color printing functions and current dir
+printfBlue2() { printf "\e[36m$1" }
 printfBlue() { printf "\e[34m$1" }
 printfGreen() { printf "\e[32m$1" }
 printfRed() { printf "\e[31m$1" }
@@ -11,8 +15,14 @@ setup_dir=$(pwd)
 
 ### Run a command silently, checking for success
 silent_check() {
-	printfBlue "  # Running $1..."
-	if ($1 > /dev/null 2>&1); then
+	eval $1 > /dev/null 2>&1
+	resetColor
+}
+
+quiet_check() {
+	eval $1 > /dev/null 2>&1
+	ret=$?
+	if [ $ret = 0 ]; then
 		printfGreen "DONE\n"
 	else
 		printfGreen "already installed\n"
@@ -20,22 +30,27 @@ silent_check() {
 	resetColor
 }
 
-#####
-### APPLE DEFAULTS
-#####
+noisy_check() {
+	printfBlue2 "    # "
+	printfBlue "Running $1..."
+	eval $1 > /dev/null 2>&1
+	ret=$?
+	if [ $ret = 0 ]; then
+		printfGreen "DONE\n"
+	else
+		printfGreen "already installed\n"
+	fi
+	resetColor
+}
 
-# Change key repeat speed
+### Change key repeat speed
 defaults write -g KeyRepeat -int 1
 defaults write -g InitialKeyRepeat -int 15
 
-# Disable character accent selector on key hold (most common on vowels)
+### Disable character accent selector on key hold (most common on vowels)
 defaults write -g ApplePressAndHoldEnabled -bool false
 
-#####
-### ZSHELL
-#####
-
-# Make zshell your shell always
+### Make zshell your shell always
 printfBlue '>> Setting shell to zshell...'
 if [ 'echo $0'='-zsh' ]; then
 	printfGreen 'already set\n\n'
@@ -54,6 +69,18 @@ else
 	printfGreen "already installed\n\n"
 fi
 resetColor
+
+### Install Homebrew
+printfBlue "Installing Homebrew...\n"
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+### thoughtbot dotfiles
+printfBlue "Installing thoughtbot dotfiles...\n"
+cd ~
+git clone git://github.com/thoughtbot/dotfiles.git
+brew tap thoughtbot/formulae
+brew install rcm
+env RCRC=$HOME/DOTFILES/rcrc rcup
 
 #####
 ### Prezto
@@ -76,13 +103,17 @@ resetColor
 ### VIM 
 #####
 
+printfBlue2 "##########\n"
+printfBlue2 "###### VIM CONFIGS\n"
+printfBlue2 "##########\n\n"
+
 # Install pathogen
 printfBlue ">> Installing pathogen..."
 mkdir -p ~/.vim/autoload ~/.vim/bundle && \
 curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 if ! grep -q 'execute pathogen#infect()' ~/.vimrc; then
 	printf "execute pathogen#infect()" >> ~/.vimrc
-	printfGreen "...DONE\n\n"
+	printfGreen "DONE\n\n"
 else
 	printfGreen "already set up\n\n"
 fi
@@ -93,29 +124,37 @@ cd ~/.vim/bundle
 
 ### install vim-snipmate: https://github.com/garbas/vim-snipmate
 printfBlue ">> Installing vim-snipmate...\n"
-printfBlue "-------------\n"
-silent_check "git clone https://github.com/tomtom/tlib_vim.git"
-silent_check "git clone https://github.com/MarcWeber/vim-addon-mw-utils.git"
-silent_check "git clone https://github.com/garbas/vim-snipmate.git"
-silent_check "git clone https://github.com/honza/vim-snippets.git"
-printfBlue "-------------\n"
-### install snippets: https://github.com/honza/vim-snippets/tree/master/snippets
+noisy_check "git clone https://github.com/tomtom/tlib_vim.git"
+noisy_check "git clone https://github.com/MarcWeber/vim-addon-mw-utils.git"
+noisy_check "git clone https://github.com/garbas/vim-snipmate.git"
+noisy_check "git clone https://github.com/honza/vim-snippets.git"
 
-printfGreen "DONE\n\n"
+printfBlue "\n>> Installing bufexplorer..."
+quiet_check "git clone https://github.com/jlanzarotta/bufexplorer"
 
+printfBlue "\n>> Installing NERDtree..."
+quiet_check "git clone https://github.com/scrooloose/nerdtree.git"
+# TODO: nerdtree-git-plugin not installed
 
+printfBlue "\n>> Installing vim-repeat..."
+quiet_check "https://github.com/tpope/vim-repeat"
 
-## Vetted:
-# 1. SnipMate - Ruby, HAML, javascript, CSS, vim, zsh, Go?
-# 2. BufExplorer (lanzarotta)
-# 3. NERDTREE (grenfell)
-# 4. Easy Motion
-# 5. Surround
-# 6. Matchit (benji fischer)
-# 7. Fugitive
-# 8. vim rails
-# 9. vim rubocop
-# 10. vim syntastic
+printfBlue "\n>> Installing vim-easymotion..."
+quiet_check "git clone https://github.com/easymotion/vim-easymotion"
+# TODO: tutorial at http://code.tutsplus.com/tutorials/vim-essential-plugin-easymotion--net-19223
+
+printfBlue "\n>> Installing vim-surround..."
+quiet_check "git clone git://github.com/tpope/vim-surround.git"
+
+printfBlue "\n>> Installing vim-fugitive..."
+quiet_check "git clone git://github.com/tpope/vim-fugitive.git"
+vim -u NONE -c \"helptags vim-fugitive/doc\" -c q
+
+printfBlue "\n>> Installing vim-rails..."
+silent_check "git clone git://github.com/tpope/vim-rails.git"
+quiet_check "git clone git://github.com/tpope/vim-bundler.git"
+
+# 10. vim rubocop
 # 11. vim speeddating
 # 12. powerline
 # 13. Ctrl-P
