@@ -168,6 +168,20 @@ settings can be found below this echo statement"
 echo "Setup Iterm2 > Preferences > Profiles > Text to have font 14pt Source
 Code Pro medium, vertical 1.0 and horizontal 0.8"
 
+# Setup local config files
+echo "Setting up .local configs"
+locals=(.aliases.local
+  .gitconfig.local
+  .gvimrc.local
+  .psqlrc.local
+  .tmux.conf.local
+  .vimrc.bundles.local
+  .vimrc.local
+  .zshenv.local
+  .zshrc.local)
+for i in "${locals[@]}"; do
+  touch ~/$i
+done
 
 # Reboot
 vared -p "Restart comp (for settings)? (yn): " -c restart
