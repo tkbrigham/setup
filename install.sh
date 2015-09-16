@@ -108,11 +108,11 @@ EOT
 echo "Installed ~/.tmux.conf.local"
 
 # vim y and p between iterm2 sessions (after restart)
-if ! grep -q 'clipboard+=unnamed' ~/.vimrc; then
-  echo "set clipboard+=unnamed" >> ~/.vimrc
-  echo "clipboard=unnamed set in .vimrc"
+if ! grep -q 'clipboard+=unnamed' ~/.vimrc.local; then
+  echo "set clipboard+=unnamed" >> ~/.vimrc.local
+  echo "clipboard=unnamed set in .vimrc.local"
 else
-  echo "clipboard=unnamed already set in .vimrc"
+  echo "clipboard=unnamed already set in .vimrc.local"
 fi
 
 # Persistent undo in vim
@@ -163,11 +163,6 @@ check_in_bundles 'fatih/vim-go'
 git config --global user.name "Thomas Brigham"
 git config --global user.email "thomas@thomasbrigham.me"
 
-echo "Before restart, this script is telling you to change your iTerm2 font! The
-settings can be found below this echo statement"
-echo "Setup Iterm2 > Preferences > Profiles > Text to have font 14pt Source
-Code Pro medium, vertical 1.0 and horizontal 0.8"
-
 # Setup local config files
 echo "Setting up .local configs"
 locals=(.aliases.local
@@ -182,6 +177,11 @@ locals=(.aliases.local
 for i in "${locals[@]}"; do
   touch ~/$i
 done
+
+# iTerm2 Settings
+echo "Set iTerm2 > Preferences > General, bottom of the window, to load from
+setup folder. Press enter to continue."
+read -s
 
 # Reboot
 vared -p "Restart comp (for settings)? (yn): " -c restart

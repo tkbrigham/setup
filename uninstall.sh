@@ -1,4 +1,5 @@
-# Script to uninstall thoughtbot dotfiles and symlinks
+# Script to uninstall thoughtbot dotfiles and symlinks, and also remove the
+# ~/fonts directory that is installed by the install.sh script
 
 # If it is desirable to remove locals
 locals=(.aliases.local
@@ -11,7 +12,7 @@ locals=(.aliases.local
   .zshenv.local
   .zshrc.local)
 
-# Assumes that dotfiles repo and all symlinks are in ~ directory
+# Assumes that dotfiles repo and all symlinks are in ~
 dotfiles=(.agignore
   .aliases
   .gemrc
@@ -29,7 +30,8 @@ dotfiles=(.agignore
   .vimrc.bundles
   .zshenv
   .zshrc
-  dotfiles)
+  dotfiles
+  fonts)
 
 
 echo "DANGER: WILL DELETE THE FOLLOWING:"
