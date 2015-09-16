@@ -41,13 +41,17 @@ env RCRC=$HOME/dotfiles/rcrc rcup
 rcup
 
 # Powerline for zshell
-if ! grep -q "_update_ps1()" ~/.zshrc; then
+if ! grep -q "_update_ps1()" ~/.zshrc.local; then
+  cd ~/.zsh
+  if ! git clone https://github.com/carlcarl/powerline-zsh 2>&1; then
+    echo "powerline-zsh already exists"
+  fi
 cat <<EOT >> ~/.zshrc.local
 
 # https://github.com/carlcarl/powerline-zsh
 export TERM="xterm-256color"
 function _update_ps1() {
-  export PROMPT="\$(~/powerline-zsh.py \$?)"
+  export PROMPT="\$(~/.zsh/powerline-zsh/powerline-zsh.py \$?)"
 }
 precmd()
 {
@@ -73,8 +77,11 @@ else
   echo "powerline.vim already installed"
 fi
 
-## Setup Iterm2 > Preferences > Profiles > Text to have font 14pt Source Code Pro medium, vertical 1.0 and horizontal 0.8
-echo "CHECK LINE 77"
+# Powerline patched fonts
+echo "Patching powerline fonts"
+rm -Rf ~/fonts
+git clone https://github.com/powerline/fonts ~
+zsh fonts/install.sh
 
 # ~/.tmux.conf.local
 brew install reattach-to-user-namespace
@@ -156,6 +163,13 @@ check_in_bundles 'fatih/vim-go'
 git config --global user.name "Thomas Brigham"
 git config --global user.email "thomas@thomasbrigham.me"
 
+echo "Before restart, this script is telling you to change your iTerm2 font! The
+settings can be found below this echo statement"
+echo "Setup Iterm2 > Preferences > Profiles > Text to have font 14pt Source
+Code Pro medium, vertical 1.0 and horizontal 0.8"
+
+
+# Reboot
 vared -p "Restart comp (for settings)? (yn): " -c restart
 if [ $restart = 'y' ]; then
   printf "Enter password to reboot...\n"
