@@ -67,7 +67,7 @@ fi
 brew install python
 pip install https://github.com/Lokaltog/powerline/tarball/develop
 
-if ! grep -q "plugin/powerline.vim" ~/.vimrc; then
+if ! grep -q "plugin/powerline.vim" ~/.vimrc.local; then
 cat <<EOT >> ~/.vimrc.local
 source /usr/local/lib/python2.7/site-packages/powerline/bindings/vim/plugin/powerline.vim
 set laststatus=2
@@ -80,7 +80,7 @@ fi
 # Powerline patched fonts
 echo "Patching powerline fonts"
 rm -Rf ~/fonts
-git clone https://github.com/powerline/fonts ~
+git clone https://github.com/powerline/fonts ~/fonts
 zsh fonts/install.sh
 
 # ~/.tmux.conf.local
@@ -108,8 +108,14 @@ EOT
 echo "Installed ~/.tmux.conf.local"
 
 # vim y and p between iterm2 sessions (after restart)
+brew install vim
+echo "Vim is in:"
+which vim
+echo "If that is not v7.4 or later, copy and paste (yp) won't work!"
 if ! grep -q 'clipboard+=unnamed' ~/.vimrc.local; then
   echo "set clipboard+=unnamed" >> ~/.vimrc.local
+  echo "moving /usr/bin/vim so that /usr/local/bin/vim is used"
+  sudo mv /usr/bin/vim /usr/bin/vim-old
   echo "clipboard=unnamed set in .vimrc.local"
 else
   echo "clipboard=unnamed already set in .vimrc.local"
